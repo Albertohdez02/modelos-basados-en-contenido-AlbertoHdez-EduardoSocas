@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { predictMatrix } from "./recommender"; // sin .js
+import { predictMatrix } from "./recommender"; 
 
 const app = express();
 const PORT = 3000;

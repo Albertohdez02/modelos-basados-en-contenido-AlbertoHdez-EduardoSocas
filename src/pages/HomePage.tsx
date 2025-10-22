@@ -56,10 +56,6 @@ export default function HomePage() {
       }
       const data: ApiResult = await response.json();
       setResult(data);
-      console.log("simMatrix:", data.simMatrix);
-      console.log("neighbors:", data.neighbors);
-      console.log("predictions (5 primeras):", data.predictions?.slice(0, 5));
-      console.log("recommendations (3 primeros usuarios):", data.recommendations?.slice(0, 3));
     } catch (error) {
       console.error(" ERROR en la predicción:", error);
       alert("ERROR realizando la predicción. Revisa la consola del backend.");
@@ -70,7 +66,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-4xl font-bold mb-6">Sistema de recomendación</h1>
+      <h1 className="text-4xl font-bold mb-6">Modelos basados en contenido</h1>
 
       <div className="space-y-4 bg-gray-800 p-6 rounded-2xl shadow-lg">
         <FileUploader onFileLoaded={handleFileLoaded} />
@@ -102,32 +98,6 @@ export default function HomePage() {
             </p>
             <pre className="text-xs overflow-auto">
               {JSON.stringify(result.simMatrix.slice(0, 5).map(r => r.slice(0, 5)), null, 2)}
-            </pre>
-          </div>
-
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <h3 className="font-semibold mb-2">2) Vecinos seleccionados (top-k por usuario)</h3>
-            <p className="text-xs text-gray-400 mb-2">Primeros 3 usuarios:</p>
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(result.neighbors.slice(0, 3), null, 2)}
-            </pre>
-          </div>
-
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <h3 className="font-semibold mb-2">3) Detalle del cálculo de predicciones (muestras)</h3>
-            <p className="text-xs text-gray-400 mb-2">
-              Cada entrada incluye vecinos usados, fórmula, predicción cruda y final.
-            </p>
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(result.predictions.slice(0, 5), null, 2)}
-            </pre>
-          </div>
-
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <h3 className="font-semibold mb-2">4) Recomendaciones por usuario (top)</h3>
-            <p className="text-xs text-gray-400 mb-2">Primeros 3 usuarios:</p>
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(result.recommendations.slice(0, 3), null, 2)}
             </pre>
           </div>
         </div>

@@ -26,23 +26,33 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ data }) => {
       <table className="min-w-full border border-gray-700 text-center">
         <thead>
           <tr>
-            <th className="border border-gray-700 px-4 py-2">Usuario</th>
-            {data.utilityMatrix[0].map((_: any, i: number) => (
-              <th key={i} className="border border-gray-700 px-4 py-2">
-                Ítem {i + 1}
-              </th>
-            ))}
+            <th className="border border-gray-700 px-4 py-2">Índice del Término</th>
+            <th className="border border-gray-700 px-4 py-2">Término</th>
+            <th className="border border-gray-700 px-4 py-2">TF</th>
+            <th className="border border-gray-700 px-4 py-2">IDF</th>
+            <th className="border border-gray-700 px-4 py-2">TF-IDF</th>
           </tr>
         </thead>
         <tbody>
-          {data.utilityMatrix.map((row: number[], i: number) => (
+          {data.resultsTable.map((row: any, i: number) => (
             <tr key={i}>
-              <td className="border border-gray-700 px-4 py-2">U{i + 1}</td>
-              {row.map((value: number | null, j: number) => (
-                <td key={j} className="border border-gray-700 px-4 py-2">
-                  {value === null ? "-" : value.toFixed(2)}
-                </td>
-              ))}
+              <td className="border border-gray-700 px-4 py-2">
+                {Array.isArray(row.termIndex ?? row.termindex)
+                  ? (row.termIndex ?? row.termindex).join(", ")
+                  : (row.termIndex ?? row.termindex ?? `U${i + 1}`)}
+              </td>
+              <td className="border border-gray-700 px-4 py-2">
+                {row.term ?? "-"}
+              </td>
+              <td className="border border-gray-700 px-4 py-2">
+                {row.tf == null ? "-" : Number(row.tf).toFixed(2)}
+              </td>
+              <td className="border border-gray-700 px-4 py-2">
+                {row.idf == null ? "-" : Number(row.idf).toFixed(2)}
+              </td>
+              <td className="border border-gray-700 px-4 py-2">
+                {row.tfidf == null ? "-" : Number(row.tfidf).toFixed(2)}
+              </td>
             </tr>
           ))}
         </tbody>

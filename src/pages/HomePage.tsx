@@ -1,107 +1,90 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import FileUploader from "../components/FileUploader";
-import MetricSelector from "../components/MetricSelector";
-import NeighborsSelector from "../components/NeighborsSelector";
-import PredictionTypeSelector from "../components/PredictionTypeSelector";
-import ResultsTable from "../components/ResultsTable";
-
-type Neighbor = { neighborIndex: number; similarity: number };
-type PredictionDetail = {
-  user: number;
-  item: number;
-  neighborsUsed: { neighborIndex: number; similarity: number; rating: number; neighborMean?: number }[];
-  rawPrediction: number;
-  finalPrediction: number;
-  formula: "simple" | "mean-diff";
-};
-type ApiResult = {
-  utilityMatrix: (number | null)[][];
-  // comprobacion de requisitos
-  completedMatrix: number[][];
-  simMatrix: number[][];
-  neighbors: Neighbor[][];
-  predictions: PredictionDetail[];
-  recommendations: { user: number; recommendations: { item: number; predicted: number }[] }[];
-  // eco de parámetros
-  metric: "pearson" | "cosine" | "euclidean";
-  k: number;
-  predictionType: "simple" | "mean-diff";
-  minRating?: number;
-  maxRating?: number;
-};
+import DocumentResults from "../components/DocumentResult";
+import SimilarityMatrix from "../components/SimilarityMatrix";
 
 export default function HomePage() {
-  const [fileText, setFileText] = useState<string | null>(null);
-  const [metric, setMetric] = useState<"pearson" | "cosine" | "euclidean">("pearson");
-  const [k, setK] = useState<number>(3);
-  const [predictionType, setPredictionType] = useState<"simple" | "mean-diff">("mean-diff");
-  const [result, setResult] = useState<ApiResult | null>(null);
+  const [documents, setDocuments] = useState<{ name: string; content: string }[]>([]);
+  const [stopwords, setStopwords] = useState<string[]>([]);
+  const [lemmatizer, setLemmatizer] = useState<Record<string, string>>({});
+  const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const canRun = !!fileText && k >= 1 && !!metric && !!predictionType;
 
-  const handleFileLoaded = async (text: string) => setFileText(text);
+  //Llamada al backend
+  const handleAnalyze = async () => {
+    if (documents.length === 0) {
+      alert("Debes subir al menos un documento.");
+      return;
+    }
+    if (stopwords.length === 0) {
+      alert("Debes subir el fichero de palabras de parada.");
+      return;
+    }
+    if (Object.keys(lemmatizer).length === 0) {
+      alert("Debes subir el fichero de lematización.");
+      return;
+    }
 
-  const handlePredict = async () => {
-    if (!canRun) return;
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/predict", {
+      const response = await fetch("http://localhost:3000/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rawText: fileText, metric, k, predictionType }),
+        body: JSON.stringify({ documents, stopwords, lemmatizer }),
       });
-      if (!response.ok) {
-        const txt = await response.text();
-        throw new Error(txt || "HTTP error");
-      }
-      const data: ApiResult = await response.json();
-      setResult(data);
-    } catch (error) {
-      console.error(" ERROR en la predicción:", error);
-      alert("ERROR realizando la predicción. Revisa la consola del backend.");
+      const data = await response.json();
+      setResults(data);
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Error al analizar los documentos. Revisa la consola.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-4xl font-bold mb-6">Modelos basados en contenido</h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
+      <div className="w-full max-w-6xl bg-white p-8 rounded-2xl shadow">
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Sistema de Recomendación Basado en Contenido
+        </h1>
 
-      <div className="space-y-4 bg-gray-800 p-6 rounded-2xl shadow-lg">
-        <FileUploader onFileLoaded={handleFileLoaded} />
-        <MetricSelector onChange={(m) => setMetric(m as any)} />
-        <NeighborsSelector onChange={(num) => setK(Number(num))} />
-        <PredictionTypeSelector onChange={(t) => setPredictionType(t as any)} />
+        {/* --- Subida de ficheros --- */}
+        <FileUploader
+          onDocsLoaded={(docs) => setDocuments(docs)}
+          onStopwordsLoaded={(words) => setStopwords(words)}
+          onLemmatizerLoaded={(map) => setLemmatizer(map)}
+        />
 
-        <button
-          onClick={handlePredict}
-          disabled={!canRun || loading}
-          className={`text-white font-semibold px-4 py-2 rounded-lg mt-4 ${
-            !canRun || loading ? "bg-gray-600 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
-          }`}
-        >
-          {loading ? "Calculando..." : "Calcular predicciones"}
-        </button>
-      </div>
-
-      <h2 className="text-2xl font-bold mt-10 mb-4">Resultados de la predicción</h2>
-      <ResultsTable data={result} />
-
-      {/* verificación de requisitos */}
-      {result && (
-        <div className="mt-10 grid grid-cols-1 gap-6">
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <h3 className="font-semibold mb-2">1) Similaridad (simMatrix)</h3>
-            <p className="text-xs text-gray-400 mb-2">
-              Matriz usuario×usuario. Mostrando un recorte 5×5:
-            </p>
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(result.simMatrix.slice(0, 5).map(r => r.slice(0, 5)), null, 2)}
-            </pre>
-          </div>
+        {/* --- Botón de análisis --- */}
+        <div className="text-center mt-8">
+          <button
+            onClick={handleAnalyze}
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg disabled:opacity-50 transition"
+          >
+            {loading ? "Analizando..." : "Analizar documentos"}
+          </button>
         </div>
-      )}
+
+        {/* --- Resultados --- */}
+        {results && (
+          <div className="mt-10">
+            <h2 className="text-xl font-semibold mb-4 text-center">Resultados</h2>
+
+            {/* Sección: Resultados por documento */}
+            {results.documents.map((doc: any, i: number) => (
+              <DocumentResults key={i} name={doc.name} terms={doc.terms} />
+            ))}
+
+            {/* Sección: Matriz de similitud coseno */}
+            <SimilarityMatrix
+              matrix={results.similarityMatrix}
+              docNames={results.documents.map((d: any) => d.name)}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

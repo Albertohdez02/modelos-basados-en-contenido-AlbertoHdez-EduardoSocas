@@ -79,11 +79,13 @@ export default function HomePage() {
               ))}
             </div>
 
+            <div id="contenedor-matriz">
             {/* Sección: Matriz de similitud coseno */}
             <SimilarityMatrix
               matrix={results.similarityMatrix}
               docNames={results.documents.map((d: any) => d.name)}
             />
+            </div>
           </div>
         )}
       </div>

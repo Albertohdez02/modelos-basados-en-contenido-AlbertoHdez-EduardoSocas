@@ -49,7 +49,7 @@ const SimilarityMatrix: React.FC<SimilarityMatrixProps> = ({ matrix, docNames })
                   key={`cell-${i}-${j}`}
                   className={`border px-3 py-2 ${
                     i === j
-                      ? "bg-green-100 font-semibold text-green-700"
+                      ? "bg-green-100 font-semibold text-green-700 diagonal"
                       : "text-gray-800"
                   }`}
                 >

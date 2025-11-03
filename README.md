@@ -125,3 +125,13 @@ Dichos documentos tienen una estructura similar.
 Para esta práctica se ha realizado un informe en el que se plasma la ejecución de la aplicación con varios
 parámetros distintos, en varios ficheros de pruebas distintos de matrices de tamaño variable. Este informe
 se encuentra en este [enlace](https://github.com/Albertohdez02/modelos-basados-en-contenido-GCO-PE101/blob/main/Informe-modelos-basados-en-contenido.pdf).
+
+-----------------------------------------------------------------------------
+
+## 📋 Documentos en español
+
+Para las pruebas de la aplicación con el lenguaje español hemos usado una colección de 10 ficheros de prueba con texto en
+este idioma. Dichos documentos se encuentran en la ruta
+```
+/documentos-esp
+```

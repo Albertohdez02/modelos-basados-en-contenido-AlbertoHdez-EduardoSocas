@@ -72,10 +72,12 @@ export default function HomePage() {
           <div className="mt-10">
             <h2 className="text-xl font-semibold mb-4 text-center">Resultados</h2>
 
-            {/* Sección: Resultados por documento */}
-            {results.documents.map((doc: any, i: number) => (
-              <DocumentResults key={i} name={doc.name} terms={doc.terms} />
-            ))}
+            <div id="contenedor">
+              {/* Sección: Resultados por documento */}
+              {results.documents.map((doc: any, i: number) => (
+                <DocumentResults key={i} name={doc.name} terms={doc.terms} />
+              ))}
+            </div>
 
             {/* Sección: Matriz de similitud coseno */}
             <SimilarityMatrix

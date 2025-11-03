@@ -124,7 +124,4 @@ Dichos documentos tienen una estructura similar.
 
 Para esta práctica se ha realizado un informe en el que se plasma la ejecución de la aplicación con varios
 parámetros distintos, en varios ficheros de pruebas distintos de matrices de tamaño variable. Este informe
-se encuentra en este mismo repositorio en la ruta: 
-```
-/Informe-modelos-basados-en-contenido.pdf
-```
+se encuentra en este [enlace](https://github.com/Albertohdez02/modelos-basados-en-contenido-GCO-PE101/blob/main/Informe-modelos-basados-en-contenido.pdf).
